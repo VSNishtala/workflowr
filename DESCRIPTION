@@ -56,6 +56,7 @@ Suggests:
     covr,
     devtools,
     miniUI (>= 0.1.1),
+    reticulate (>= 1.14.9000),
     shiny (>= 0.14),
     spelling,
     testthat (>= 2.0.0),
@@ -63,3 +64,5 @@ Suggests:
 VignetteBuilder: knitr
 SystemRequirements: pandoc (>= 1.12.3) - http://pandoc.org
 Language: en-US
+Remotes:
+    rstudio/reticulate

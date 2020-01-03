@@ -1,5 +1,8 @@
 # workflowr 1.6.0.9000
 
+* Send warning if Python plots created using outdated version of reticulate (bug
+report from @lazappi, #181)
+
 # workflowr 1.6.0
 
 ## New features

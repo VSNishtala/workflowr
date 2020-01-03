@@ -395,7 +395,8 @@ test_that("wflow_html sends warning if fig.path is set by user", {
   html <- rmarkdown::render(rmd, quiet = TRUE)
   expect_true(fs::file_exists(html))
   html_lines <- readLines(html)
-  expect_true(sum(stringr::str_detect(html_lines, "<code>fig.path</code>")) == 1)
+  warnings_fig.path <- stringr::str_detect(html_lines, "<code>fig.path</code>")
+  expect_identical(sum(warnings_fig.path), 1L)
 
   # If set globally, a warning should be generated for each plot (in this case 3)
   rmd2 <- file.path(tmp_dir, "file2.Rmd")
@@ -403,8 +404,31 @@ test_that("wflow_html sends warning if fig.path is set by user", {
   html2 <- rmarkdown::render(rmd2, quiet = TRUE)
   expect_true(fs::file_exists(html2))
   html_lines2 <- readLines(html2)
-  expect_true(sum(stringr::str_detect(html_lines2, "<code>fig.path</code>")) == 3)
+  warnings_fig.path2 <- stringr::str_detect(html_lines2, "<code>fig.path</code>")
+  expect_identical(sum(warnings_fig.path2), 3L)
+})
 
+test_that("wflow_html sends warning for outdated version of reticulate", {
+
+  skip_on_cran()
+
+  tmp_dir <- tempfile()
+  fs::dir_create(tmp_dir)
+  tmp_dir <- workflowr:::absolute(tmp_dir)
+  on.exit(unlink(tmp_dir, recursive = TRUE))
+
+  rmd <- file.path(tmp_dir, "file.Rmd")
+  fs::file_copy("files/test-wflow_html/python-figure.Rmd", rmd)
+  html <- rmarkdown::render(rmd, quiet = TRUE)
+  expect_true(fs::file_exists(html))
+  html_lines <- readLines(html)
+  warnings_reticulate <- stringr::str_detect(html_lines,
+                                             "<a href=\"https://cran.r-project.org/package=reticulate\">reticulate</a>")
+  expect_identical(sum(warnings_reticulate), 2L)
+
+  # fig.path warning should also still be sent
+  warnings_fig.path <- stringr::str_detect(html_lines, "<code>fig.path</code>")
+  expect_identical(sum(warnings_fig.path), 1L)
 })
 
 # Test cache_hook --------------------------------------------------------------
